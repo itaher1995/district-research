@@ -43,10 +43,6 @@ create_acs_view() {
         --GEO=$1
 }
 
-create_cd_voting_age_pop_view() {
-    $PROJ_PYTHON jobs/mk_acs_cd_voting_age_view.py --API_KEY=${CENSUS_API_KEY}
-}
-
 # plots vote history for congressional races from 2008 to 2020
 plot_vote_history() {
     $PROJ_PYTHON jobs/plt_vote_history.py
@@ -69,10 +65,16 @@ zip_district_outputs() {
 
 # Code to create the dashboard on google colab. May break if testing in local.
 launch_colab_dash() {
-    # npm install localtunnel
     . venv/bin/activate
+    npm install localtunnel
     streamlit cache clear
-    streamlit run streamlit/app.py #&>/dev/null&
-    # ! lt --port 8501
+    streamlit run streamlit/app.py &>/dev/null&
+    lt --port 8501
     deactivate
+}
+
+launch_dash() {
+    . venv/bin/activate
+    streamlit run streamlit/app.py
+    lt --port 8501
 }
