@@ -7,6 +7,7 @@
 *.shx
 *.csv
 *.txt
+!requirements.txt
 *.xlsx
 *.png
 *.zip
