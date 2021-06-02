@@ -53,7 +53,7 @@ def get_general_election_results(df, start, stop, area, is_district):
     # Democrats appear on the general election ballot.
     subset['party'] = np.where(
         (subset['rank'] != 1) & (subset['party'].isin(['DEMOCRAT', 'REPUBLICAN'])), 
-        subset['party'] + '-' + subset['rank'].astype(str), 
+        subset['party'] + ' (' + subset['rank'].astype(str) + ')', 
         subset['party']
     )
 
