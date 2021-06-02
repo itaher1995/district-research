@@ -71,9 +71,14 @@ def main():
     t2.title(f'District Research for {CD}')
     t3.write('')
 
+    # put an empty title here because we'll generate the title using plotly.
+    # This is done so that the dashboard looks nicer.
     center_obj(
-        vw.get_historical_turnout_plot(house_df, state, district_num),
-        'Historical District General Election Results*'
+        vw.get_historical_turnout_plot(
+            house_df,  
+            state, 
+            district_num
+        ), 'Historical District General Election Results*'
     )
 
     cd_ind = cd_df[cd_df['CD'] == CD][list(indicators.values())].T

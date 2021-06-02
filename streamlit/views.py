@@ -83,7 +83,11 @@ def get_historical_turnout_plot(df, state, district_num=None, voting_age_pop_ct=
         party_sub = subset_pivot[subset_pivot['PARTY'] == p]
         fig.add_trace(go.Scatter(x=party_sub['year'], y=party_sub['VOTES'], mode='lines+markers', name=p))
     
-    fig.update_layout(xaxis_title = 'YEAR', yaxis_title = 'Number of Votes')
+    fig.update_layout(
+        margin=dict(t=20, b=20, l=0, r=0),
+        xaxis_title='YEAR', 
+        yaxis_title='Number of Votes'
+    )
     return fig
 
 
