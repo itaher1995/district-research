@@ -36,7 +36,7 @@ def plot_district_characteristic(map_cd_df, district, characteristic,
     (
         district_df
         [pd.notnull(district_df['geometry'])]
-        .plot(column=characteristic, legend=True, cmap='Blues', ax=ax)
+        .plot(column=characteristic, legend=True, cmap='Blues', edgecolor="black", ax=ax)
     )
 
     if title:

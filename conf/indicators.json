@@ -5,6 +5,12 @@
 "DP05_0078PE": "Percent Black",
 "DP05_0077PE": "Percent White",
 "DP05_0071PE": "Percent Latino",
+"DP05_0080PE": "Percent Asian",
+"DP05_0081PE": "Percent Native Hawaiian and Other Pacific Islander",
+"DP05_0021PE": "Percent 18 Years and Older",
+"DP05_0024PE": "Percent 65 Years and Older",
+"DP03_0097PE": "Percent Privately Insured (Of Insured Population)",
+"DP03_0099PE": "Uninsured Rate",
 "DP02_0067PE": "High School Graduation Rate",
 "DP02_0068PE": "College Graduation Rate"
 }

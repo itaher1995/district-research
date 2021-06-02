@@ -23,8 +23,6 @@ Please save these datasets in the `data` folder.
 
 **Senate**: 
 
-
-
 **President**:
 
 ### ZCTA Shapefiles
@@ -33,7 +31,11 @@ Download from [here](https://www2.census.gov/geo/tiger/TIGER2019/ZCTA5/). Please
 
 ### ZCTAto Congressional District Crosswalk
 
-ZCTA to Congressional District data is gathered from two sources. The first source is a list of ztcas to congressional districts in states with 
+ZCTA to Congressional District data is gathered from the [Geographic Correspondence Engine](https://mcdc.missouri.edu/applications/geocorr2018.html). Please download and save in `data` folder.
+
+### PVI
+
+PVI is the partisan voter index from the Cook Political Report. Please click **Get the data** [here](https://cookpolitical.com/pvi-map-and-district-list). Rename to pvi.csv and move to `data` folder.
 
 ## Goals
 
@@ -53,12 +55,8 @@ ZCTA to Congressional District data is gathered from two sources. The first sour
 `streamlit` scripts used to launch streamlit dashboard for visualizing district data
 `venv` is where the virtual environment will live
 `jobs` stores scripts used for project
-`notebooks` location to store jupyter notebooks
+`notebooks` location to store jupyter notebook used to launch district dashboard.
 `Makefile` contains some shortcuts (kind of a duplicate of jobs.sh honestly)
-
-## A Note on Notebooks
-
-While version controlling jupyter notebooks can be kind of pointless, we do need to host these notebooks because we use them for visualizing data for the district research portion. Volunteers will access these notebooks while they are hosted as Google Colab Notebooks.
 
 ## Requirements
 

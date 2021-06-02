@@ -43,10 +43,6 @@ create_acs_view() {
         --GEO=$1
 }
 
-create_cd_voting_age_pop_view() {
-    $PROJ_PYTHON jobs/mk_acs_cd_voting_age_view.py --API_KEY=${CENSUS_API_KEY}
-}
-
 # plots vote history for congressional races from 2008 to 2020
 plot_vote_history() {
     $PROJ_PYTHON jobs/plt_vote_history.py
@@ -67,12 +63,25 @@ zip_district_outputs() {
     done
 }
 
-# Code to create the dashboard on google colab. May break if testing in local.
-launch_colab_dash() {
-    # npm install localtunnel
+launch_dash() {
     . venv/bin/activate
-    streamlit cache clear
-    streamlit run streamlit/app.py #&>/dev/null&
-    # ! lt --port 8501
+    streamlit run streamlit/app.py
     deactivate
+}
+
+# zip everything needed for streamlit
+zip_streamlit() {
+    zip -r "zips/conf.zip" \
+        "conf/censuskey.txt"
+
+    zip -r "zips/data.zip" \
+        "data/1976-2018-house3.csv" \
+        "data/1976-2020-president.csv" \
+        "data/1976-2020-senate.csv" \
+        "data/2020-house-full.csv" \
+        "data/acs1-congressional-district-indicators-2019.csv" \
+        "data/acs1-state-indicators-2019.csv" \
+        "data/acs-zcta5-cong-dist-indicators-2019.csv" \
+        "data/tl_2019_us_zcta510" \
+        "data/pvi.csv"
 }
