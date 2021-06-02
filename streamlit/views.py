@@ -1,11 +1,5 @@
 """Code to create views that are used as input to streamlit for visualizations.
-    Views Needed:
-        * Historical vote by district -- district research code
-        * Map by district -- district research code
-        * House results by district -- district research code
-        * Senate results statewide -- district research code
-        * Presidential results statewide -- district research code
-            * need to pull
+    TODO(itaher): Add documentation
 """
 import pandas as pd
 import numpy as np
@@ -75,6 +69,19 @@ def get_historical_turnout_table(df,state, district_num=None, voting_age_pop_ct=
         vw['VOTER TURNOUT PERCENTAGE'] = vw['TOTAL']/voting_age_pop_ct
 
     return vw
+
+
+def get_pvi_sentence(df, district):
+    d = df[df['Dist'] == district]
+    pct = np.round(d['pvi_pct'].values[0] * 100, 2)
+
+    if pct > 50:
+        substr = f'bottom {100 - pct}%'
+    else:
+        substr = f'top {pct}%'
+
+    return f'This district\'s PVI is **{d["PVI"].values[0]}**. That\'s in the **{substr}** most Democratic districts. Ideally this should be **at least D+16**.'
+
 
 
 @st.cache(allow_output_mutation=True)
