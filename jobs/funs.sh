@@ -82,5 +82,6 @@ zip_streamlit() {
         "data/acs1-congressional-district-indicators-2019.csv" \
         "data/acs1-state-indicators-2019.csv" \
         "data/acs-zcta5-cong-dist-indicators-2019.csv" \
-        "data/tl_2019_us_zcta510"
+        "data/tl_2019_us_zcta510" \
+        "data/pvi.csv"
 }
