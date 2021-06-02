@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import geopandas as gpd
 import streamlit as st
+import plotly.graph_objects as go
 
 from district_research.data.elections import get_general_election_results
 
@@ -49,7 +50,7 @@ def read_general_election_df(election_type):
     return df
 
 
-def get_historical_turnout_table(df,state, district_num=None, voting_age_pop_ct=None):
+def get_historical_turnout_table(df, state, district_num=None, voting_age_pop_ct=None):
 
     if district_num and district_num != 'SN':
         district = state + '-' + district_num
@@ -69,6 +70,21 @@ def get_historical_turnout_table(df,state, district_num=None, voting_age_pop_ct=
         vw['VOTER TURNOUT PERCENTAGE'] = vw['TOTAL']/voting_age_pop_ct
 
     return vw
+
+def get_historical_turnout_plot(df, state, district_num=None, voting_age_pop_ct=None):
+    
+    subset = get_historical_turnout_table(df, state, district_num, voting_age_pop_ct)
+    subset = subset.drop('TOTAL', axis=1).reset_index()
+    subset_pivot = subset.melt(id_vars='year', var_name='PARTY', value_name='VOTES')
+
+    fig = go.Figure()
+
+    for p in subset_pivot['PARTY'].unique():
+        party_sub = subset_pivot[subset_pivot['PARTY'] == p]
+        fig.add_trace(go.Scatter(x=party_sub['year'], y=party_sub['VOTES'], mode='lines+markers', name=p))
+    
+    fig.update_layout(xaxis_title = 'YEAR', yaxis_title = 'Number of Votes')
+    return fig
 
 
 def get_pvi_sentence(df, district):

@@ -10,13 +10,13 @@ from district_research.data.pvi import clean_pvi
 
 import views as vw
 
-def center_table(table, title):
+def center_obj(obj, title):
     container = st.beta_container()
     col1, col2, col3 = container.beta_columns([1, 4, 1])
 
     col1.write('')
     col2.subheader(title)
-    col2.write(table)
+    col2.write(obj)
     col3.write('')
 
 def main():
@@ -71,18 +71,17 @@ def main():
     t2.title(f'District Research for {CD}')
     t3.write('')
 
-    c2 = st.beta_container()
-    house_hist_plt, cong_ind_col = c2.beta_columns(2)
-    house_hist_plt.subheader('Historical District General Election Results*')
-    house_hist_plt.line_chart(vw.get_historical_turnout_table(house_df, state, district_num).drop('TOTAL', axis = 1))
+    center_obj(
+        vw.get_historical_turnout_plot(house_df, state, district_num),
+        'Historical District General Election Results*'
+    )
 
-    cong_ind_col.subheader('Congressional District Indicators')
     cd_ind = cd_df[cd_df['CD'] == CD][list(indicators.values())].T
     cd_ind.columns = ['Indicator Values']
-    cong_ind_col.write(cd_ind)
+    center_obj(cd_ind, 'Congressional District Indicators')
 
-    c3 = st.beta_container()
-    p1, p2, p3 = c3.beta_columns([3, 10, 1])
+    c2 = st.beta_container()
+    p1, p2, p3 = c2.beta_columns([3, 10, 1])
     p2.markdown(vw.get_pvi_sentence(pvi_df, CD))
 
     voting_age_pop_cd_ct = cd_df[cd_df['CD'] == CD]['Voting Age Population (Citizens)'].values[0]
@@ -91,9 +90,9 @@ def main():
     senate_tbl = vw.get_historical_turnout_table(senate_df, state, None, voting_age_pop_state_ct)
     president_tbl = vw.get_historical_turnout_table(president_df, state, None, voting_age_pop_state_ct)
     
-    center_table(house_tbl, 'House (District)*')
-    center_table(senate_tbl, 'Senate (Statewide)')
-    center_table(president_tbl, 'President (Statewide)')
+    center_obj(house_tbl, 'House (District)*')
+    center_obj(senate_tbl, 'Senate (Statewide)')
+    center_obj(president_tbl, 'President (Statewide)')
 
     ind = st.sidebar.selectbox('Plot Census Indicator', list(indicators_rev.keys()))
 
