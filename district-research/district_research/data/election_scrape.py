@@ -1,3 +1,7 @@
+"""Code to scrape and clean data from USA Today and CNN to create the 2020 
+    congressional election results. Combine both sources to get full coverage
+    of elections.
+"""
 from bs4 import BeautifulSoup
 import requests
 import pandas as pd
@@ -41,6 +45,7 @@ def _create_2020_results(soup):
 
 
 def scrape_usa_today():
+    """Scrapes USA Today for 2020 election data for house general elections."""
     url = 'https://www.usatoday.com/elections/results/2020-11-03/us-house/'
     response = requests.get(url)
     html = response.text.encode()
@@ -83,7 +88,7 @@ def _create_2020_results_by_state(state):
 
 
 def scrape_cnn(states):
-
+    """Given a list of states scrape CNN for results of congressional elections."""
     # assumes that non-states are not included (e.g. no DC)
     res = pd.concat([_create_2020_results_by_state(x) for x in states])
     res = res.rename(columns = {'fullName': 'candidate', 'candidatePartyCode': 'party', 'voteNum': 'candidatevotes'})

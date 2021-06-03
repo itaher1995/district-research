@@ -19,6 +19,8 @@ def plot_district_characteristic(map_cd_df, district, characteristic,
             district (str): The district to plot
             characteristic (str): The code to plot from the data table from
             ACS data.
+        Returns
+            Nothing, but plots a map.
     """
 
     district_df = map_cd_df[(map_cd_df['CD'] == district)]
@@ -56,7 +58,8 @@ def plot_district_characteristic(map_cd_df, district, characteristic,
 
 def plot_house_general_election_results(df, district, save_dir, start, stop):
     """Plots general election results in a given district for Democrats and
-        Republicans."""
+        Republicans.
+    """
 
     # TODO(any): extend this to senate and presidential races if needed
     sns.set_style('whitegrid')

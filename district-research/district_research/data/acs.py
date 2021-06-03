@@ -4,12 +4,29 @@ Is only for five year estimates. We will use this in place of the python package
 census when they do not support something.
 """
 
-import logging
-
 import requests
 import pandas as pd
 
 def get_acs_data_table(api_key, est, year, geo, geo_val, *codes):
+    """Creates a table of socioeconomic indicators for either ACS1 or ACS5 
+        indicators for a given year for certain geographic levels. For example,
+        we can create ACS5 socioeconomic estimates for ZCTAs (Census version of
+        zip codes) in the year 2019.
+
+        Args:
+            api_key (str): The API Key used to access ACS data
+            est (str): The type of estimate. Is either 'acs1' or 'acs5'
+            year (int): The year to grab estimates for
+            geo (str): The type of geography to grab data for
+            geo_val (str): A comma delimited string of the geographies to grab
+                data for. If one wants all just put '*'
+            codes (str): args that indicate the different census socioeconomic
+                codes.
+        
+        Returns
+            A DataFrame with every geography and its associated socioeconomic 
+                values.
+    """
 
     codes_str = ','.join(list(codes) + [x + 'A' for x in codes])
     geo_formatted = geo.lower().replace(' ', '%20')

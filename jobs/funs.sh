@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# A set of functions to use on a UNIX machine (Linux/Mac) that aid with interactive
+# development. We still need to decide whether a Windows version is needed. 
+
 # If PYTHON does not point to your python installation, then you'll need to
 # change this variable. If you installed anaconda then this should work.
 PYTHON=$CONDA_PYTHON_EXE
@@ -48,10 +51,11 @@ plot_vote_history() {
     $PROJ_PYTHON jobs/plt_vote_history.py
 }
 
-# Create full dataset 
+# Create full 2020 house general election results 
 scrape_house_results_2020() {
     $PROJ_PYTHON jobs/mk_election_results_2020.py
 }
+
 
 zip_district_outputs() {
     dirs=$(ls outputs/)
