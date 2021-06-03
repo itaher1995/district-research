@@ -1,3 +1,7 @@
+"""Script that is used to plot general election results for a given list of 
+    districts in the config. This has been replaced by the district dashboard,
+    but we are keeping it just in case.
+"""
 import logging
 
 import pandas as pd

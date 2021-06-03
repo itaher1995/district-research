@@ -1,21 +1,13 @@
+"""Make an dataset of socioeconomic indicators sourced from the one year estimates
+    the American Community Survey provides. This code is generally used to populate
+    congressional district and state socioeconomic indicators.
+"""
 import argparse
 import logging
 import json
 
 import pandas as pd
 from district_research.data.acs import get_acs_data_table
-
-def _do_cd_cleaning(data, indicators):
-    '''Cleans data for congressional district'''
-    data['CD'] = (
-        data['STUSAB'] 
-        + '-' 
-        + data['congressional district']
-            .astype(str).str.pad(2, 'left', '0').replace('00','01')
-        )
-    
-    data = data[~data['CD'].str.endswith('ZZ')][['CD', *indicators]]
-    return data
 
 def main(args):
     logging.basicConfig(level=logging.INFO)

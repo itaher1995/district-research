@@ -1,3 +1,4 @@
+"""Main script to launch streamlit dashboard for district demographic data"""
 import json
 
 import streamlit as st
@@ -120,10 +121,12 @@ def main():
     
     st.subheader('References')
     st.markdown('1. "Data." *[MIT Election Data + Science Lab](https://electionlab.mit.edu/data)*')
-    st.markdown('2. "American Community Survey 1 Year Data, 2019." *[Census](https://www.census.gov/data/developers/data-sets/acs-1year.2019.html)*')
-    st.markdown('3. "American Community Survey 5 Year Data, 2019." *[Census](https://www.census.gov/data/developers/data-sets/acs-5year.2019.html)*')
-    st.markdown('4. "TIGER/Line Shapefiles, 2019." *[Census](https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html)*')
-    st.markdown('5. "Geographic Corresponence Engine." *[Missouri Census Data Center](https://mcdc.missouri.edu/applications/geocorr2018.html)*')
+    st.markdown('2. "2020 House Election Results & Map." *[USA Today](https://www.usatoday.com/elections/results/2020-11-03/us-house/)*')
+    st.markdown('3. "House Election Results 2020." *[CNN](https://www.cnn.com/election/2020/results/house)*')
+    st.markdown('4. "American Community Survey 1 Year Data, 2019." *[Census](https://www.census.gov/data/developers/data-sets/acs-1year.2019.html)*')
+    st.markdown('5. "American Community Survey 5 Year Data, 2019." *[Census](https://www.census.gov/data/developers/data-sets/acs-5year.2019.html)*')
+    st.markdown('6. "TIGER/Line Shapefiles, 2019." *[Census](https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html)*')
+    st.markdown('7. "Geographic Corresponence Engine." *[Missouri Census Data Center](https://mcdc.missouri.edu/applications/geocorr2018.html)*')
 
 if __name__ == '__main__':
     main()

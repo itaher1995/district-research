@@ -2,7 +2,8 @@
 of Representatives. There are two source: CNN and USA Today. We need both
 because USA Today is more comprehensive on a race by race basis, but races where
 the candidate ran unopposed don't have much data on the website. Therefore we
-fill in the blanks with CNN."""
+fill in the blanks with CNN.
+"""
 
 import logging
 

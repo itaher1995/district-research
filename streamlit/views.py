@@ -9,8 +9,8 @@ import plotly.graph_objects as go
 
 from district_research.data.elections import get_general_election_results
 
-def _create_house_2020_view():
-
+def _create_house_view():
+    """Creates the house view that'll be used to plot general election results."""
     df = (
         pd.read_csv('data/1976-2018-house3.csv')
         [['year', 'state_po', 'district', 'party', 'candidatevotes', 'stage']]
@@ -33,9 +33,20 @@ def _create_house_2020_view():
 
 
 def read_general_election_df(election_type):
+    """Depending on the race type, reads in a csv of general election results.
+        If its the house, concats two datasets together to create up to date
+        results.
+
+        Args:
+            election_type (str): A string denoting whether this is a 'house',
+                'senate' or 'presidential' race.
+        
+        Returns:
+            A DataFrame of historical general election results.
+    """
 
     if election_type == 'house':
-        df = _create_house_2020_view()
+        df = _create_house_view()
     elif election_type == 'senate':
         df = (
             pd.read_csv('data/1976-2020-senate.csv')
@@ -51,6 +62,23 @@ def read_general_election_df(election_type):
 
 
 def get_historical_turnout_table(df, state, district_num=None, voting_age_pop_ct=None):
+    """Takes a dataframe of election results and gets the results of elections
+        for a given race (e.g. MO-01, MO-SN or MO-Pres) between 2008 and 2020.
+        Also provides voter turnout % where the denominator is the 2019 Citizen
+        Voting Age Population.
+
+        Args:
+            df (Pandas DataFrame): DataFrame of election results
+            state (str): The abbreviation of the state we are interested in
+                getting results for
+            district_num (str): The string that denotes the district number
+                e.g. 01, 02, 10, 40, etc.
+            voting_age_pop_ct (int): The number of citizens in a district that
+                are at least 18.
+        Returns:
+            A DataFrame that has results for candidates of different parties
+                between 2008 and 2020 in a given race.
+    """
 
     if district_num and district_num != 'SN':
         district = state + '-' + district_num
@@ -72,6 +100,20 @@ def get_historical_turnout_table(df, state, district_num=None, voting_age_pop_ct
     return vw
 
 def get_historical_turnout_plot(df, state, district_num=None, voting_age_pop_ct=None):
+    """Plots the historical turnout table returned from get_historical_turnout_table.
+
+        Args:
+            df (Pandas DataFrame): DataFrame of election results
+            state (str): The abbreviation of the state we are interested in
+                getting results for
+            district_num (str): The string that denotes the district number
+                e.g. 01, 02, 10, 40, etc.
+            voting_age_pop_ct (int): The number of citizens in a district that
+                are at least 18.
+        Returns:
+            A plotly figure, which is a line graph of historical general election
+                results.
+    """
     
     subset = get_historical_turnout_table(df, state, district_num, voting_age_pop_ct)
     subset = subset.drop('TOTAL', axis=1).reset_index()
@@ -92,6 +134,18 @@ def get_historical_turnout_plot(df, state, district_num=None, voting_age_pop_ct=
 
 
 def get_pvi_sentence(df, district):
+    """Creates a sentence (str) that denotes what a district's PVI is, how 
+        democratic is it relative to ALL OTHER DISTRICTS and a threshold. Uses
+        a dataframe of PVI values and the district itself to identify these
+        metrics.
+
+        Args:
+            df (Pandas DataFrame): DataFrame of PVI data.
+            district (str): Name of the district to get PVI data for
+        Returns:
+            A string that states the PVI, its percentile relative to all other
+            districts and the benchmark we'd like to achieve.
+    """
     d = df[df['Dist'] == district]
     pct = np.round(d['pvi_pct'].values[0] * 100, 2)
 
@@ -106,7 +160,9 @@ def get_pvi_sentence(df, district):
 
 @st.cache(allow_output_mutation=True)
 def make_map_table():
-
+    """Uses shape files and socioeconomic data from the acs five year estimates
+        to associate ZCTAs, Congressional Districts and socioeconomic indicators.
+    """
     indicator_df = pd.read_csv('data/acs-zcta5-cong-dist-indicators-2019.csv')
     indicator_df['ZCTA5'] = indicator_df['ZCTA5'].astype(str).str.pad(5, 'left', '0')
 
