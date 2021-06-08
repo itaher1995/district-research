@@ -57,6 +57,14 @@ def get_general_election_results(df, start, stop, area, is_district):
         subset['party']
     )
 
+    # Any named party candidate that isn't the top 2 for that party will be
+    # considered OTHER. This is for simplicity purposes. 
+    subset['party'] = np.where(
+        subset['party'].isin(['DEMOCRAT', 'REPUBLICAN', 'DEMOCRAT (2)', 'REPUBLICAN (2)']),
+        subset['party'],
+        'OTHER'
+    )
+
     if is_district:
         filter_col = 'CD'
         subset[filter_col] = (

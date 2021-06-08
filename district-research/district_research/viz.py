@@ -23,7 +23,10 @@ def plot_district_characteristic(map_cd_df, district, characteristic,
             Nothing, but plots a map.
     """
 
-    district_df = map_cd_df[(map_cd_df['CD'] == district)]
+    if district[-2:] != 'SN':
+        district_df = map_cd_df[(map_cd_df['CD'] == district)]
+    else:
+        district_df = map_cd_df[(map_cd_df['CD'].str.startswith(district[:2]))]
 
     # The annotation variable indicates something is off for an estimate when it
     # is filled in. Therefore we only want when these annotation variable is not
