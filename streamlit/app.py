@@ -59,7 +59,7 @@ def main():
             [(house_df['state_po'] == state) & (house_df['year'] == 2020)]
             ['district'].values
         )
-        .tolist() 
+        .tolist() + ['SN']
     )
 
     district_num = st.sidebar.selectbox('Select District', district_list)
@@ -72,31 +72,48 @@ def main():
     t2.title(f'District Research for {CD}')
     t3.write('')
 
-    # put an empty title here because we'll generate the title using plotly.
-    # This is done so that the dashboard looks nicer.
-    center_obj(
-        vw.get_historical_turnout_plot(
-            house_df,  
-            state, 
-            district_num
-        ), 'Historical District General Election Results*'
-    )
+    if district_num != 'SN':
+        center_obj(
+            vw.get_historical_turnout_plot(
+                house_df,  
+                state, 
+                district_num
+            ), 'Historical District General Election Results*'
+        )
+    else:
+        center_obj(
+            vw.get_historical_turnout_plot(
+                senate_df,  
+                state, 
+                district_num
+            ), 'Historical Senate General Election Results*'
+        )
 
-    cd_ind = cd_df[cd_df['CD'] == CD][list(indicators.values())].T
-    cd_ind.columns = ['Indicator Values']
-    center_obj(cd_ind, 'Congressional District Indicators')
+    if district_num != 'SN':
+        ind = cd_df[cd_df['CD'] == CD][list(indicators.values())].T
+    else:
+        ind = state_df[state_df['STUSAB'] == state][list(indicators.values())].T
 
-    c2 = st.beta_container()
-    p1, p2, p3 = c2.beta_columns([3, 10, 1])
-    p2.markdown(vw.get_pvi_sentence(pvi_df, CD))
+    ind.columns = ['Indicator Values']
+    center_obj(ind, f'{CD} Indicators')
 
-    voting_age_pop_cd_ct = cd_df[cd_df['CD'] == CD]['Voting Age Population (Citizens)'].values[0]
+    # TODO(itaher): Implement PVI stats for Senate
+    if district_num != 'SN':
+        c2 = st.beta_container()
+        p1, p2, p3 = c2.beta_columns([3, 10, 1])
+        p2.markdown(vw.get_pvi_sentence(pvi_df, CD))
+
     voting_age_pop_state_ct = state_df[state_df['STUSAB'] == state]['Voting Age Population (Citizens)'].values[0]
-    house_tbl = vw.get_historical_turnout_table(house_df, state, district_num, voting_age_pop_cd_ct)
+
+    if district_num != 'SN':
+        voting_age_pop_cd_ct = cd_df[cd_df['CD'] == CD]['Voting Age Population (Citizens)'].values[0]
+        house_tbl = vw.get_historical_turnout_table(
+            house_df, state, district_num, voting_age_pop_cd_ct
+        )
+        center_obj(house_tbl, 'House (District)*')
+
     senate_tbl = vw.get_historical_turnout_table(senate_df, state, None, voting_age_pop_state_ct)
     president_tbl = vw.get_historical_turnout_table(president_df, state, None, voting_age_pop_state_ct)
-    
-    center_obj(house_tbl, 'House (District)*')
     center_obj(senate_tbl, 'Senate (Statewide)')
     center_obj(president_tbl, 'President (Statewide)')
 
@@ -117,7 +134,7 @@ def main():
 
     st.markdown("***")
     st.subheader('Notes:')
-    st.write('\* You may see a column that looks like Democrat/Republican (x), where x is a number. This will happen in states like California, where its possible to see two candidates of the same party in the general election.')
+    st.write('\* You may see a column that looks like Democrat/Republican (x), where x is a number. This will happen in states like California, where its possible to see two candidates of the same party in the general election. It may also happen in states where two Senate seats are being contested. In those situations Democrat and Democrat (2) represent the leading Democrats in their respective races. In Senate races like this, Other is assumed to be total votes for all non-major candidates from both races. Thus, in this case it is possible for Other to have more votes than a major party candidate. This is also possible when the incumbent Senator is an independent (e.g. Bernie Sanders).')
     
     st.subheader('References')
     st.markdown('1. "Data." *[MIT Election Data + Science Lab](https://electionlab.mit.edu/data)*')
