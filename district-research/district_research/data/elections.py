@@ -78,7 +78,7 @@ def get_general_election_results(df, start, stop, area, is_district):
 
         # don't include any secondary democrats or republicans in non-house races
         # these may be write ins. 
-        subset = subset[~subset['party'].str.match('(?:DEMOCRAT|REPUBLICAN)-\d')]
+        subset = subset[~subset['party'].str.match('(?:DEMOCRAT|REPUBLICAN) \(\d\)')]
     
     return (
         subset[['year', filter_col, 'party', 'candidatevotes']]
