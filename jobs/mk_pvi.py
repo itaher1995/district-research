@@ -93,7 +93,6 @@ def score_validation(calculated_pvi, cook_pvi, year):
     
     pvi = calculated_pvi_sub.merge(cook_pvi, how='left', on='CD')
 
-    # difference in PVI
     print((pvi['pvi'] - pvi['Cook_PVI']).describe([0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99]))
     print(pvi[['pvi', 'Cook_PVI']].corr())
 
@@ -143,6 +142,10 @@ def main():
     cook_pvi_df = cook_pvi_df.rename(columns={'Dist':'CD'})
 
     print(score_validation(historical_pvi, cook_pvi_df[['CD', 'Cook_PVI']], 2016))
+
+    historical_pvi.to_csv('data/historical_calculate_pvi.csv', index=False)
+
+
 
 if __name__ == '__main__':
     main()
