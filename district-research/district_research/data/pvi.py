@@ -2,7 +2,7 @@
 
 import numpy as np
 
-def clean_pvi(pvi_column, do_rank=False):
+def clean_cook_pvi(pvi_column, do_rank=False):
     """Take the series, pvi_column and convert it to a continuous integer, where
         more negative means more democratic and more positive means more 
         republican.
