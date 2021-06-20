@@ -7,7 +7,7 @@ import pandas as pd
 import seaborn as sns
 
 from district_research.viz import plot_district_characteristic
-from district_research.data.pvi import clean_pvi
+from district_research.data.pvi import clean_cook_pvi
 
 import views as vw
 
@@ -29,7 +29,7 @@ def main():
 
     pvi_df = pd.read_csv('data/pvi.csv')
     pvi_df['Dist'] = pvi_df['Dist'].str.replace('-AL', '-01')
-    pvi_df['pvi_pct'] = clean_pvi(pvi_df['PVI'], True)
+    pvi_df['pvi_pct'] = clean_cook_pvi(pvi_df['PVI'], True)
 
     states_list = np.unique(house_df['state_po'].values).tolist()
     map_df = vw.make_map_table()
