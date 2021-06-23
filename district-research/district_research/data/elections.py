@@ -65,6 +65,13 @@ def get_general_election_results(df, start, stop, area, is_district):
         'OTHER'
     )
 
+    # Democrats are named different things in two states, ND and MN.
+    subset['party'] = (
+        subset['party']
+        .replace('DEMOCRATIC-FARMER-LABOR', 'DEMOCRAT')
+        .replace('DEMOCRATIC-NONPARTISAN LEAGUE', 'DEMOCRAT')
+        )
+
     if is_district:
         filter_col = 'CD'
         subset[filter_col] = (
