@@ -23,6 +23,13 @@ def get_general_election_results(df, start, stop, area, is_district):
     """
 
     subset = df[(df['year'] >= start) & (df['year'] <= stop)]
+
+    # Democrats are named different things in two states, ND and MN.
+    subset['party'] = (
+        subset['party']
+        .replace('DEMOCRATIC-FARMER-LABOR', 'DEMOCRAT')
+        .replace('DEMOCRATIC-NONPARTISAN LEAGUE', 'DEMOCRAT')
+    )
     subset['party'] = np.where(
         ~subset['party'].isin(['DEMOCRAT', 'REPUBLICAN']),
         'OTHER',

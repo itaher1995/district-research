@@ -82,10 +82,10 @@ def get_historical_turnout_table(df, state, district_num=None, voting_age_pop_ct
 
     if district_num and district_num != 'SN':
         district = state + '-' + district_num
-        res = get_general_election_results(df, 2008, 2020, district, True)
+        res = get_general_election_results(df, 2012, 2020, district, True)
 
     else:
-        res = get_general_election_results(df, 2008, 2020, state, False)
+        res = get_general_election_results(df, 2012, 2020, state, False)
     vw = (
         res.pivot_table(index='year', columns='party', 
             values='candidatevotes', aggfunc=np.sum)
