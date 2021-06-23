@@ -1,9 +1,9 @@
 import setuptools
-
+import district_research
 
 setuptools.setup(
     name="district-research",
-    version="0.0.1",
+    version=district_research.__version__,
     author="Ibrahim Yousuf Taher",
     author_email="ibrahim@brandnewcongress.com",
     description="Package to create data deliverables for district research",

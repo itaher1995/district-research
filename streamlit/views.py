@@ -154,7 +154,7 @@ def get_pvi_sentence(df, district):
     else:
         substr = f'top {pct}%'
 
-    return f'This district\'s PVI is **{d["PVI"].values[0]}**. That\'s in the **{substr}** most Democratic districts. Ideally this should be **at least D+16**.'
+    return f'This district\'s PVI is **{d["PVI"].values[0]}**. That\'s in the **{substr}** most Democratic districts. Ideally this should be **at least D+24**.'
 
 
 
