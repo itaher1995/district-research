@@ -78,7 +78,7 @@ def calculate_pvi(pvi_df, pres_share_df):
 
     return pvi_winner[['CD', 'year', 'pvi']]
 
-def score_validation(calculated_pvi, cook_pvi, year):
+def score_validation(calculated_pvi, cook_pvi):
     """Calculate the correlation between the pvi we calculate and the cook pvi.
         While our scores may not line up with cook's all the time, getting the
         validation can give us some confidence in using the scores from here
@@ -88,34 +88,49 @@ def score_validation(calculated_pvi, cook_pvi, year):
             * Correlation of scores
             * Summary stats for difference of scores
     """
-
-    calculated_pvi_sub = calculated_pvi[calculated_pvi['year'] == year]
     
-    pvi = calculated_pvi_sub.merge(cook_pvi, how='left', on='CD')
-
-    print((pvi['pvi'] - pvi['Cook_PVI']).describe([0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99]))
+    pvi = calculated_pvi.merge(cook_pvi, how='left', on='CD')
+    pvi['pvi_diff'] = pvi['pvi'] - pvi['Cook_PVI']
+    print((pvi['pvi_diff']).describe([0.01, 0.05, 0.1, 0.25, 0.5, 0.75, 0.9, 0.95, 0.99]))
     print(pvi[['pvi', 'Cook_PVI']].corr())
-
+    print(pvi.sort_values(by='pvi_diff', ascending=False).head(10))
+    print(pvi.sort_values(by='pvi_diff').head(10))
 
 def main():
 
     # step 1: read in presidential election results by congressional district from
-    # daily kos. Clean and combine datasets. This is used to calculate each
-    # congressional districts results for president
-    pvi_df1 = pd.read_csv(
+    # daily kos. Clean datasets. Each dataset has slightly different cleaning patterns
+    # so we opt to have code chunks rather than creating a general function.
+    pres2020 = pd.read_csv(
         'data/Daily Kos Elections 2012, 2016 & 2020 presidential election results for congressional districts used in 2020 elections - Results.csv',
         header=1    
     )
-    pvi_df1 = pvi_df1.drop([*pvi_df1.columns[1:3], *pvi_df1.columns[-2:]], axis=1)
-    print(pvi_df1.columns)
-    pvi_df1.columns = ['CD', 'D_2020', 'R_2020', 'D_2016', 'R_2016', 'D_2012', 'R_2012']
+    pres2020 = pres2020.drop([*pres2020.columns[1:3], *pres2020.columns[-2:]], axis=1)
+    pres2020.columns = ['CD', 'D_2020', 'R_2020', 'D_2016', 'R_2016', 'D_2012', 'R_2012']
+    pres2020 = pres2020[['CD', 'D_2020', 'R_2020', 'D_2016', 'R_2016']]
+    pres2020['CD'] = pres2020['CD'].str.replace('-AL', '-01')
+    
+    pres2018 = pd.read_csv(
+        'data/Daily Kos Elections 2008, 2012 & 2016 presidential election results for congressional districts used in 2018 elections - Results.csv',
+        header=1
+    )
+    pres2018 = pres2018.drop([*pres2018.columns[1:3], *pres2018.columns[9:]], axis=1)
+    pres2018.columns = ['CD', 'D_2016', 'R_2016', 'D_2012', 'R_2012', 'D_2008', 'D_2008']
+    pres2018 = pres2018[['CD', 'D_2016', 'R_2016', 'D_2012', 'R_2012']]
+    pres2018['CD'] = pres2018['CD'].str.replace('-AL', '-01')
 
-    pvi_df2 = pd.read_csv('data/Daily Kos Elections 2008 & 2012 presidential election results for congressional districts used in 2012 & 2014 elections - Results.csv')
-    pvi_df2.columns = ['CD', 'Incumbent', 'Party', 'D_2012', 'R_2012', 'D_2008', 'R_2008']
-    pvi_df2 = pvi_df2.drop(['Incumbent', 'Party', 'D_2012', 'R_2012'], axis=1)
+    pres2016 = pd.read_csv(
+        'data/Daily Kos Elections 2008, 2012 & 2016 presidential election results for congressional districts used in 2016 elections - Results.csv',
+        header=1
+    ).drop(['Incumbent', 'Party'], axis=1)
+    pres2016.columns = ['CD', 'D_2016', 'R_2016', 'D_2012', 'R_2012', 'D_2008', 'D_2008']
+    pres2016 = pres2016[['CD', 'D_2016', 'R_2016', 'D_2012', 'R_2012']]
+    pres2016['CD'] = pres2016['CD'].str.replace('-AL', '-01')
 
-    pvi_df = pvi_df1.merge(pvi_df2, how='left', on='CD')
-    pvi_df['CD'] = pvi_df['CD'].str.replace('-AL', '-01')
+    pres2014 = pd.read_csv('data/Daily Kos Elections 2008 & 2012 presidential election results for congressional districts used in 2012 & 2014 elections - Results.csv')
+    pres2014.columns = ['CD', 'Incumbent', 'Party', 'D_2012', 'R_2012', 'D_2008', 'R_2008']
+    pres2014 = pres2014.drop(['Incumbent', 'Party', 'D_2008', 'R_2008'], axis=1)
+    pres2014['CD'] = pres2014['CD'].str.replace('-AL', '-01')
 
     # step 2: read in historical presidential results. This is used to calculate
     # national results. This is used for normalizing PVI and helping us to understand
@@ -124,7 +139,7 @@ def main():
         pd.read_csv('data/1976-2020-president.csv')
         .rename(columns={'party_detailed': 'party'})
     )
-    pres_sub = get_general_election_results(pres, 2008, 2020, '*', False)
+    pres_sub = get_general_election_results(pres, 2012, 2020, '*', False)
     pres_sub_vote_ct = pres_sub.groupby(['year', 'party']).sum()['candidatevotes'].reset_index()
     pres_sub_vote_ct = pres_sub_vote_ct[pres_sub_vote_ct['party'].isin(['DEMOCRAT', 'REPUBLICAN'])]
     pres_sub_vote_ct['totalvotes'] = pres_sub_vote_ct.groupby('year').transform('sum')['candidatevotes']
@@ -133,7 +148,14 @@ def main():
 
     # step 3: calculate PVI
     # TODO(itaher): rectify small differences between cook and our calculation
-    historical_pvi = calculate_pvi(pvi_df, pres_sub_vote_ct)
+    pvi2020 = calculate_pvi(pres2020, pres_sub_vote_ct)
+    pvi2020['year'] = 2020
+    pvi2018 = calculate_pvi(pres2018, pres_sub_vote_ct)
+    pvi2018['year'] = 2018
+    pvi2016 = calculate_pvi(pres2016, pres_sub_vote_ct)
+    pvi2016['year'] = 2016
+    pvi2014 = calculate_pvi(pres2014, pres_sub_vote_ct)
+    pvi2014['year'] = 2014
 
     # step 4: validation
     cook_pvi_df = pd.read_csv('data/pvi.csv')
@@ -141,7 +163,9 @@ def main():
     cook_pvi_df['Cook_PVI'] = clean_cook_pvi(cook_pvi_df['PVI'], False)
     cook_pvi_df = cook_pvi_df.rename(columns={'Dist':'CD'})
 
-    print(score_validation(historical_pvi, cook_pvi_df[['CD', 'Cook_PVI']], 2016))
+    score_validation(pvi2018, cook_pvi_df[['CD', 'Cook_PVI']])
+
+    historical_pvi = pd.concat([pvi2014, pvi2016, pvi2018, pvi2020]).reset_index(drop=True)
 
     historical_pvi.to_csv('data/historical_calculate_pvi.csv', index=False)
 

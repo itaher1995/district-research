@@ -73,6 +73,10 @@ launch_dash() {
     deactivate
 }
 
+calculate_pvi() {
+    $PROJ_PYTHON jobs/mk_pvi.py
+}
+
 # zip everything needed for streamlit
 zip_streamlit() {
     zip -r "zips/conf.zip" \
