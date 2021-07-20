@@ -39,11 +39,11 @@ def main():
     indicators_rev = {v: k for k,v in indicators.items()}
 
     cd_df = (
-        pd.read_csv('data/acs1-congressional-district-indicators-2019.csv')
+        pd.read_csv('data/acs1-congressional-district-indicators-2017-2019.csv')
         .rename(columns=indicators)
     )
     state_df = (
-        pd.read_csv('data/acs1-state-indicators-2019.csv')
+        pd.read_csv('data/acs1-state-indicators-2017-2019.csv')
         .rename(columns=indicators)
     )
     
@@ -90,18 +90,39 @@ def main():
         )
 
     if district_num != 'SN':
-        ind = cd_df[cd_df['CD'] == CD][list(indicators.values())].T
+        ind_df = cd_df[(cd_df['CD'] == CD) & (cd_df['YEAR'] == 2019)][list(indicators.values())].T
     else:
-        ind = state_df[state_df['STUSAB'] == state][list(indicators.values())].T
+        ind_df = state_df[(state_df['STUSAB'] == state) & (state_df['YEAR'] == 2019)][list(indicators.values())].T
 
-    ind.columns = ['Indicator Values']
-    center_obj(ind, f'{CD} Indicators')
+    ind_df.columns = ['Indicator Values']
+    center_obj(ind_df, f'{CD} Indicators')
+
+    ind = st.sidebar.selectbox('Plot Census Indicator', list(indicators_rev.keys()))
+
+    if district_num != 'SN':
+        center_obj(
+            vw.get_indicator_plot(cd_df, ind, state, district_num),
+            f'{ind} Over Time for {state}-{district_num}'
+        )
+    else:
+        center_obj(
+            vw.get_indicator_plot(state_df, ind, state),
+            f'{ind} Over Time for {state}'
+        )
 
     # TODO(itaher): Implement PVI stats for Senate
     if district_num != 'SN':
         c2 = st.beta_container()
         p1, p2, p3 = c2.beta_columns([3, 10, 1])
         p2.markdown(vw.get_pvi_sentence(pvi_df, CD))
+    
+    c3 = st.beta_container()
+    p31, p32, p33 = c3.beta_columns([3, 10, 1])
+
+    if district_num == 'SN':
+        p32.markdown(vw.get_diversity_index(state_df, 'STUSAB', state))
+    else:
+        p32.markdown(vw.get_diversity_index(cd_df, 'CD', CD))
 
     voting_age_pop_state_ct = state_df[state_df['STUSAB'] == state]['Voting Age Population (Citizens)'].values[0]
 
@@ -117,7 +138,6 @@ def main():
     center_obj(senate_tbl, 'Senate (Statewide)')
     center_obj(president_tbl, 'President (Statewide)')
 
-    ind = st.sidebar.selectbox('Plot Census Indicator', list(indicators_rev.keys()))
 
     # empty line to separate election data from maps
     st.text("")

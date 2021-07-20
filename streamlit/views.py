@@ -1,5 +1,6 @@
 """Code to create views that are used as input to streamlit for visualizations.
-    TODO(itaher): Add documentation
+    TODO(itaher): Determine what code belongs in views.py and what should be
+    moved back into district_research
 """
 import pandas as pd
 import numpy as np
@@ -157,6 +158,48 @@ def get_pvi_sentence(df, district):
     return f'This district\'s PVI is **{d["PVI"].values[0]}**. That\'s in the **{substr}** most Democratic districts. Ideally this should be **at least D+24**.'
 
 
+def get_indicator_plot(df, indicator, state, district_num=None):
+
+    if district_num:
+        district = state + '-' + district_num
+        subset = df[df['CD'] == district]
+    else:
+        subset = df[df['STUSAB'] == state]
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=subset['YEAR'], y=subset[indicator], mode='lines+markers'))
+    fig.update_layout(
+        margin=dict(t=20, b=20, l=0, r=0),
+        xaxis_title='YEAR', 
+        yaxis_title=indicator
+    )
+
+    return fig
+
+
+def get_diversity_index(df, geo, geo_val):
+
+    subset = df[(df['YEAR'] == 2019)]
+
+    # racial characteristics
+    subset_race = subset[[
+        'Percent Black',
+        'Percent White',
+        'Percent Asian',
+        'Percent Latino',
+        'Percent Native Hawaiian and Other Pacific Islander'
+    ]]
+
+    for c in subset_race.columns:
+        subset_race[c] = subset_race[c]/100 * np.log(subset_race[c]/100)
+    
+    subset['racial_diversity'] = -subset_race.sum(axis=1)
+    subset['racial_diversity_pct'] = subset['racial_diversity'].rank(pct=True)
+
+    area_vals = subset[subset[geo] == geo_val][[geo, 'racial_diversity_pct', 'Percent White']]
+
+    return f'{geo_val}\'s Racial Diversity Index is {np.round(area_vals["racial_diversity_pct"].values[0], 2)} on a scale of 0 to 1. It\'s Minority Percentage is {100 - area_vals["Percent White"].values[0]}%.'
+    
 
 @st.cache(allow_output_mutation=True)
 def make_map_table():
