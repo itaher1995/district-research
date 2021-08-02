@@ -1,5 +1,7 @@
 # District Research
 
+Primary Developer: [Ibrahim Taher](https://github.com/itaher1995)
+
 ## Overview
 
 District Research is a project aimed to understand the socioeconomic and partisan characteristics of a district. We will use American Community Survey Five Year Estimates, as well as congressional district returns.
