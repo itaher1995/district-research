@@ -8,6 +8,7 @@ import seaborn as sns
 
 from district_research.viz import plot_district_characteristic
 from district_research.data.pvi import clean_pvi
+from district_research.data.elections import clean_daily_kos2020
 
 import views as vw
 
@@ -26,6 +27,10 @@ def main():
     house_df = vw.read_general_election_df('house')
     senate_df = vw.read_general_election_df('senate')
     president_df = vw.read_general_election_df('president')
+    pres_cd_df = clean_daily_kos2020(pd.read_csv(
+        'data/Daily Kos Elections 2012, 2016 & 2020 presidential election results for congressional districts used in 2020 elections - Results.csv',
+        header=1
+        ))
 
     pvi_df = pd.read_csv('data/pvi.csv')
     pvi_df['Dist'] = pvi_df['Dist'].str.replace('-AL', '-01')
@@ -65,6 +70,8 @@ def main():
     district_num = st.sidebar.selectbox('Select District', district_list)
     CD = f'{state}-{district_num}'
 
+    ind = st.sidebar.selectbox('Plot Census Indicator', list(indicators_rev.keys()))
+
     # to center title
     c1 = st.beta_container()
     t1, t2, t3 = c1.beta_columns([3, 10, 1])
@@ -78,7 +85,17 @@ def main():
                 house_df,  
                 state, 
                 district_num
-            ), 'Historical District General Election Results*'
+            ), 'Historical District-Level House General Election Results* (Counts)'
+        )
+
+        center_obj(
+            vw.get_presidential_df_historical_pct_plot(pres_cd_df, CD),
+            f'Historical District-Level Presidential General Election Results (Percentages)'
+        )
+
+        center_obj(
+            vw.get_indicator_plot(cd_df, ind, state, district_num),
+            f'{ind} Over Time for {state}-{district_num}'
         )
     else:
         center_obj(
@@ -89,6 +106,11 @@ def main():
             ), 'Historical Senate General Election Results*'
         )
 
+        center_obj(
+            vw.get_indicator_plot(state_df, ind, state),
+            f'{ind} Over Time for {state}'
+        )
+
     if district_num != 'SN':
         ind_df = cd_df[(cd_df['CD'] == CD) & (cd_df['YEAR'] == 2019)][list(indicators.values())].T
     else:
@@ -96,19 +118,6 @@ def main():
 
     ind_df.columns = ['Indicator Values']
     center_obj(ind_df, f'{CD} Indicators')
-
-    ind = st.sidebar.selectbox('Plot Census Indicator', list(indicators_rev.keys()))
-
-    if district_num != 'SN':
-        center_obj(
-            vw.get_indicator_plot(cd_df, ind, state, district_num),
-            f'{ind} Over Time for {state}-{district_num}'
-        )
-    else:
-        center_obj(
-            vw.get_indicator_plot(state_df, ind, state),
-            f'{ind} Over Time for {state}'
-        )
 
     # TODO(itaher): Implement PVI stats for Senate
     if district_num != 'SN':
@@ -160,6 +169,7 @@ def main():
     st.markdown('1. "Data." *[MIT Election Data + Science Lab](https://electionlab.mit.edu/data)*')
     st.markdown('2. "2020 House Election Results & Map." *[USA Today](https://www.usatoday.com/elections/results/2020-11-03/us-house/)*')
     st.markdown('3. "House Election Results 2020." *[CNN](https://www.cnn.com/election/2020/results/house)*')
+    st.markdown('4. "Daily Kos Elections\' presidential results by congressional district for 2020, 2016, and 2012." *[Daily Kos](https://www.dailykos.com/stories/2020/11/19/1163009/-Daily-Kos-Elections-presidential-results-by-congressional-district-for-2020-2016-and-2012)*')
     st.markdown('4. "American Community Survey 1 Year Data, 2019." *[Census](https://www.census.gov/data/developers/data-sets/acs-1year.2019.html)*')
     st.markdown('5. "American Community Survey 5 Year Data, 2019." *[Census](https://www.census.gov/data/developers/data-sets/acs-5year.2019.html)*')
     st.markdown('6. "TIGER/Line Shapefiles, 2019." *[Census](https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html)*')

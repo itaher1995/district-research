@@ -134,6 +134,32 @@ def get_historical_turnout_plot(df, state, district_num=None, voting_age_pop_ct=
     return fig
 
 
+def get_presidential_df_historical_pct_plot(df, district):
+    """Plots the presidential election results in each congressional district.
+
+        Arguments:
+            df (Pandas DataFrame): DataFrame of percentages of votes for Democrats
+            and Republicans between 2012 and 2020
+            district (str): The district to plot these results for.
+        
+        Returns:
+            A plotly fig that plots these results.
+    """
+    subset = df[df['CD'] == district]
+    fig = go.Figure()
+    for p in subset['PARTY'].unique():
+        party_sub = subset[subset['PARTY'] == p]
+        fig.add_trace(go.Scatter(x=party_sub['YEAR'], y=party_sub['PCT'], mode='lines+markers', name=p))
+
+    fig.update_layout(
+        margin=dict(t=20, b=20, l=0, r=0),
+        xaxis_title='Year', 
+        yaxis_title='Percentage of Votes'
+    )
+
+    return fig        
+
+
 def get_pvi_sentence(df, district):
     """Creates a sentence (str) that denotes what a district's PVI is, how 
         democratic is it relative to ALL OTHER DISTRICTS and a threshold. Uses
@@ -159,7 +185,18 @@ def get_pvi_sentence(df, district):
 
 
 def get_indicator_plot(df, indicator, state, district_num=None):
-
+    """Creates a bar plot for census indicators since 2017.
+    
+        Args:
+            df (Pandas DataFrame): DataFrame at either state or congressional
+            district level with ACS data.
+            indicator (str): The indicator code from census.
+            state (str): State abbreviation
+            district_num (str): Two digit district representation (e.g. 01, 10)
+        
+        Returns:
+            Plotly graphical object. Bar plot of indicator since 2017.
+    """
     if district_num:
         district = state + '-' + district_num
         subset = df[df['CD'] == district]
@@ -167,7 +204,7 @@ def get_indicator_plot(df, indicator, state, district_num=None):
         subset = df[df['STUSAB'] == state]
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=subset['YEAR'], y=subset[indicator], mode='lines+markers'))
+    fig.add_trace(go.Bar(x=subset['YEAR'].astype(str), y=subset[indicator]))
     fig.update_layout(
         margin=dict(t=20, b=20, l=0, r=0),
         xaxis_title='YEAR', 
@@ -178,6 +215,15 @@ def get_indicator_plot(df, indicator, state, district_num=None):
 
 
 def get_diversity_index(df, geo, geo_val):
+    """Shannon Entropy of Racial Demographics
+        Args:
+            df (Pandas DataFrame): DataFrame at some geography level with racial
+            percentages
+            geo (str): Geography level (e.g. state, cd, etc.)
+            geo_val (str): Corresponding code to geo
+        Returns:
+            A string that talks about the racial diversity index.
+    """
 
     subset = df[(df['YEAR'] == 2019)]
 
@@ -198,7 +244,7 @@ def get_diversity_index(df, geo, geo_val):
 
     area_vals = subset[subset[geo] == geo_val][[geo, 'racial_diversity_pct', 'Percent White']]
 
-    return f'{geo_val}\'s Racial Diversity Index is {np.round(area_vals["racial_diversity_pct"].values[0], 2)} on a scale of 0 to 1. It\'s Minority Percentage is {100 - area_vals["Percent White"].values[0]}%.'
+    return f'{geo_val}\'s Racial Diversity Index is {np.round(area_vals["racial_diversity_pct"].values[0], 2)} on a scale of 0.00 to 1.00. It\'s Minority Percentage is {100 - area_vals["Percent White"].values[0]}%.'
     
 
 @st.cache(allow_output_mutation=True)

@@ -42,7 +42,8 @@ create_acs_view() {
     $PROJ_PYTHON jobs/mk_acs_view.py \
         --API_KEY=${CENSUS_API_KEY} \
         --EST=acs1 \
-        --YEAR=2019 \
+        --START_YEAR=2017 \
+        --END_YEAR=2019 \
         --GEO=$1
 }
 
