@@ -204,6 +204,8 @@ def get_indicator_plot(df, indicator, state, district_num=None):
         subset = df[df['STUSAB'] == state]
 
     fig = go.Figure()
+
+    # TODO(itaher): Fix this to have x as categoricals not numerics when plotting
     fig.add_trace(go.Bar(x=subset['YEAR'].astype(str), y=subset[indicator]))
     fig.update_layout(
         margin=dict(t=20, b=20, l=0, r=0),
