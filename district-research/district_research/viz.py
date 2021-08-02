@@ -44,6 +44,9 @@ def plot_district_characteristic(map_cd_df, district, characteristic,
         .plot(column=characteristic, legend=True, cmap='Blues', edgecolor="black", ax=ax)
     )
 
+    plt.xlabel('Latitude')
+    plt.ylabel('Longitude')
+
     if title:
         plt.title(title)
     else:

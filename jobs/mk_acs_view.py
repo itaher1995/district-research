@@ -14,7 +14,8 @@ def main(args):
 
     logging.info('Reading configs...')
     API_KEY = args['API_KEY']
-    YEAR = args['YEAR']
+    START_YEAR = args['START_YEAR']
+    END_YEAR = args['END_YEAR']
     GEO = args['GEO'].replace('_', ' ')
     EST = args['EST']
 
@@ -25,12 +26,14 @@ def main(args):
     state_codes['STATE'] = state_codes['STATE'].astype(str).str.pad(2, 'left', '0')
     logging.info(f'\tcount: {len(state_codes)}')
 
-    logging.info(f'Getting indicator data for {GEO}s from ACS API')
-    data = (
-        get_acs_data_table(API_KEY, EST, YEAR, GEO, '*', *indicators)
+    logging.info(f'Getting indicator data for {GEO}s from ACS API from {START_YEAR} to {END_YEAR}')
+
+    data = pd.concat([(
+        get_acs_data_table(API_KEY, EST, str(y), GEO, '*', *indicators)
         .rename(columns={'state':'STATE'})
         .merge(state_codes, how='left', on='STATE')
-    )
+    ) for y in range(START_YEAR, END_YEAR+1)]).reset_index(drop=True)
+
     if GEO == 'congressional district':
         data['CD'] = (data['STUSAB'] 
             + '-' 
@@ -40,15 +43,15 @@ def main(args):
                 .replace('00','01')
         )
     
-        data = data[~data['CD'].str.endswith('ZZ')][['CD', *indicators]]
+        data = data[~data['CD'].str.endswith('ZZ')][['CD', 'YEAR', *indicators]]
 
     elif args['GEO'] == 'state':
-        data = data[['STUSAB', *indicators]]
+        data = data[['STUSAB', 'YEAR', *indicators]]
 
     logging.info(f'\tcount: {len(data)}')
     logging.info('Writing File...')
     data.to_csv(
-        f'data/{EST}-{GEO.replace(" ", "-")}-indicators-2019.csv', 
+        f'data/{EST}-{GEO.replace(" ", "-")}-indicators-{START_YEAR}-{END_YEAR}.csv', 
         index=False
     )
 
@@ -56,7 +59,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--API_KEY', type=str, help='the Census API Key')
     parser.add_argument('--EST', type=str, help='Type of acs estimate (acs5 or acs1)')
-    parser.add_argument('--YEAR', type=str, help='year to collect data for')
+    parser.add_argument('--START_YEAR', type=int, help='first year to collect data for')
+    parser.add_argument('--END_YEAR', type=int, help='last year to collect data for')
     parser.add_argument('--GEO', type=str, help='geography to collect data for')
     args = vars(parser.parse_args())
 
