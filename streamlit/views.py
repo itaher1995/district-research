@@ -160,7 +160,7 @@ def get_presidential_df_historical_pct_plot(df, district):
     return fig        
 
 
-def get_pvi_sentence(df, district):
+def get_pvi_sentence(df, district, year):
     """Creates a sentence (str) that denotes what a district's PVI is, how 
         democratic is it relative to ALL OTHER DISTRICTS and a threshold. Uses
         a dataframe of PVI values and the district itself to identify these
@@ -181,7 +181,7 @@ def get_pvi_sentence(df, district):
     else:
         substr = f'top {pct}%'
 
-    return f'This district\'s PVI is **{d["PVI"].values[0]}**. That\'s in the **{substr}** most Democratic districts. Ideally this should be **at least D+24**.'
+    return f'This district\'s PVI ({year}) is **{d["PVI"].values[0]}**. That\'s in the **{substr}** most Democratic districts. Ideally this should be **at least D+24**.'
 
 
 def get_indicator_plot(df, indicator, state, district_num=None):
@@ -235,7 +235,8 @@ def get_diversity_index(df, geo, geo_val):
         'Percent White',
         'Percent Asian',
         'Percent Latino',
-        'Percent Native Hawaiian and Other Pacific Islander'
+        'Percent Native Hawaiian and Other Pacific Islander',
+        'Percent American Indian and Alaska Native'
     ]]
 
     for c in subset_race.columns:

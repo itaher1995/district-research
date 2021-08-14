@@ -6,7 +6,7 @@
 """
 import argparse
 import logging
-import json
+import yaml
 
 import pandas as pd
 import geopandas as gpd
@@ -25,8 +25,8 @@ def main(args):
     with open('conf/districts.txt', 'r') as f:
         districts = f.readlines()
         districts = [x.replace('\n','').strip() for x in districts]
-    with open('conf/indicators.json', 'r') as f:
-        indicators = json.load(f)
+    with open('conf/indicators.yml', 'r') as f:
+        indicators = yaml.safe_load(f)['current']
 
     logging.info('Reading zip code shape files...')
     shape_df = (
@@ -64,6 +64,10 @@ def main(args):
         .merge(shape_df, how='left', on='ZCTA5')
         .merge(vars_to_plot, how='left', on='ZCTA5')
         [['ZCTA5', 'CD', 'geometry', *indicators] + [x+'A' for x in indicators]]
+        .rename(columns=indicators)
+        .rename(columns={
+            '{}A'.format(k): '{} Error Code'.format(v) for k,v in indicators.items()
+        })
     )
     logging.info(f'\tcount: {len(df)}')
     logging.info(f'\tnull rate:\n\t\t{pd.isnull(df).sum()/len(df)}')

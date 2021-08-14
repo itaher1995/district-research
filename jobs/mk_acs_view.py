@@ -4,7 +4,7 @@
 """
 import argparse
 import logging
-import json
+import yaml
 
 import pandas as pd
 from district_research.data.acs import get_acs_data_table
@@ -19,8 +19,8 @@ def main(args):
     GEO = args['GEO'].replace('_', ' ')
     EST = args['EST']
 
-    with open('conf/indicators.json', 'r') as f:
-        indicators = json.load(f)
+    with open('conf/indicators.yml', 'r') as f:
+        indicators = yaml.safe_load(f)
     logging.info('Reading in state codes...')
     state_codes = pd.read_csv('data/state_codes.txt', sep='|')
     state_codes['STATE'] = state_codes['STATE'].astype(str).str.pad(2, 'left', '0')
@@ -29,8 +29,21 @@ def main(args):
     logging.info(f'Getting indicator data for {GEO}s from ACS API from {START_YEAR} to {END_YEAR}')
 
     data = pd.concat([(
-        get_acs_data_table(API_KEY, EST, str(y), GEO, '*', *indicators)
+        get_acs_data_table(API_KEY, EST, str(y), GEO, '*', *indicators['current'])
         .rename(columns={'state':'STATE'})
+        .rename(columns=indicators['current'])
+        .rename(columns={
+            '{}A'.format(k): '{} Error Code'.format(v) for k,v in indicators['current'].items()
+        })
+        .merge(state_codes, how='left', on='STATE')
+    ) if y>=2017 else
+    (
+        get_acs_data_table(API_KEY, EST, str(y), GEO, '*', *indicators['past'])
+        .rename(columns={'state':'STATE'})
+        .rename(columns=indicators['past'])
+        .rename(columns={
+            '{}A'.format(k): '{} Error Code'.format(v) for k,v in indicators['past'].items()
+        })
         .merge(state_codes, how='left', on='STATE')
     ) for y in range(START_YEAR, END_YEAR+1)]).reset_index(drop=True)
 
@@ -43,10 +56,10 @@ def main(args):
                 .replace('00','01')
         )
     
-        data = data[~data['CD'].str.endswith('ZZ')][['CD', 'YEAR', *indicators]]
+        data = data[~data['CD'].str.endswith('ZZ')][['CD', 'YEAR', *indicators['current'].values()]]
 
     elif args['GEO'] == 'state':
-        data = data[['STUSAB', 'YEAR', *indicators]]
+        data = data[['STUSAB', 'YEAR', *indicators['current'].values()]]
 
     logging.info(f'\tcount: {len(data)}')
     logging.info('Writing File...')
