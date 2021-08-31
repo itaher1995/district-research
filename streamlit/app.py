@@ -140,10 +140,10 @@ def main():
     else:
         p32.markdown(vw.get_diversity_index(cd_df, 'CD', CD))
 
-    voting_age_pop_state_ct = state_df[state_df['STUSAB'] == state]['Voting Age Population (Citizens)'].values[0]
+    voting_age_pop_state_ct = state_df[(state_df['STUSAB'] == state) & (state_df['YEAR'] == 2019)]['Voting Age Population (Citizens)'].values[0]
 
     if district_num != 'SN':
-        voting_age_pop_cd_ct = cd_df[cd_df['CD'] == CD]['Voting Age Population (Citizens)'].values[0]
+        voting_age_pop_cd_ct = cd_df[(cd_df['CD'] == CD) & (cd_df['YEAR'] == 2019)]['Voting Age Population (Citizens)'].values[0]
         house_tbl = vw.get_historical_turnout_table(
             house_df, state, district_num, voting_age_pop_cd_ct
         )
