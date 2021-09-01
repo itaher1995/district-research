@@ -29,3 +29,7 @@ A: The web server we are using to host our application is an open source applica
 ### Q: A part of the dashboard failed to load. What do I do?
 
 A: Refresh the dashboard. It should load. This happens very rarely. If not contact Ibi Taher.
+
+## Q: How is the racial diversity index calculated
+
+A: The index is calculated using shannon's entropy. It is a measure of randomness.

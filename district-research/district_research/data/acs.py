@@ -28,7 +28,13 @@ def get_acs_data_table(api_key, est, year, geo, geo_val, *codes):
                 values.
     """
 
-    codes_str = ','.join(list(codes) + [x + 'A' for x in codes])
+    # removing the voting age population citizens metric for years prior bc
+    # the census doesn't seem to have it for any year after this one.
+    if int(year) >= 2017:
+        codes_str = ','.join(list(codes) + [x + 'A' for x in codes])
+    else:
+        codes_str = ','.join([x for x in codes if x!='DP05_0087E'] + [x + 'A' for x in codes if x!='DP05_0087E'])
+
     geo_formatted = geo.lower().replace(' ', '%20')
     url = (
         'https://api.census.gov/data/{0}'
@@ -44,4 +50,6 @@ def get_acs_data_table(api_key, est, year, geo, geo_val, *codes):
     assert response.status_code == 200
 
     acs_response = response.json()
-    return pd.DataFrame(acs_response[1:], columns=acs_response[0])
+    df = pd.DataFrame(acs_response[1:], columns=acs_response[0])
+    df['YEAR'] = year
+    return df

@@ -2,6 +2,7 @@
     district
 """
 import numpy as np
+import pandas as pd
 
 def get_general_election_results(df, start, stop, area, is_district):
     """Grabs general election results from a dataset that aheres to the MIT
@@ -97,8 +98,32 @@ def get_general_election_results(df, start, stop, area, is_district):
         return subset[['year', filter_col, 'party', 'candidatevotes']]
 
 
-def project_voter_turnout():
-    """Creates a dataframe for a given district that projects the final voter
-        turnout.
+def clean_daily_kos2020(df):
+    """Code to clean the daily kos general election results by congressional
+        district.
+
+        Args:
+            df (Pandas DataFrame): A DataFrame containing election results from
+            2012 to 2020
+        
+        Returns:
+            A cleaned pandas dataframe with election results.
     """
-    pass
+    df_copy = df.iloc[:, :9]
+    df_copy.columns = ["district", "incumbent", "party", "dem_2020", "rep_2020", 
+                    "dem_2016", "rep_2016", "dem_2012", "rep_2012"]
+    df_copy = df_copy.drop(['incumbent', 'party'], axis=1)
+
+    df_copy = df_copy.melt(
+        id_vars='district', 
+        value_vars = ['dem_2020', 'rep_2020', 'dem_2016', 'rep_2016', 'dem_2012', 'rep_2012']
+    )
+
+    df_copy[["party", "year"]] = pd.DataFrame(df_copy["variable"].str.split("_").values.tolist())
+    df_copy = df_copy.pivot_table(index = ["year", 'district'], columns = "party", values = "value").reset_index()
+    df_copy["other"] = 100 - df_copy["dem"] - df_copy["rep"]
+    df_copy.columns = ['YEAR', 'CD', 'DEMOCRAT', 'REPUBLICAN', 'OTHER']
+    df_copy['CD'] = df_copy['CD'].str.replace('-AL', '-01')
+    df_copy = df_copy.melt(id_vars = ['YEAR', 'CD'], var_name='PARTY', value_name='PCT')
+
+    return df_copy
