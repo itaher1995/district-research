@@ -49,10 +49,10 @@ def main():
     indicators_rev = {v: k for k,v in indicators['current'].items()}
 
     cd_df = (
-        pd.read_csv('data/acs1-congressional-district-indicators-2012-2019.csv')
+        pd.read_csv('data/acs1-congressional-district-indicators-2017-2019.csv')
     )
     state_df = (
-        pd.read_csv('data/acs1-state-indicators-2012-2019.csv')
+        pd.read_csv('data/acs1-state-indicators-2017-2019.csv')
     )
     
     state = st.sidebar.selectbox('Select State', states_list)
