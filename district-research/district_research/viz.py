@@ -9,7 +9,7 @@ from .data.acs import get_acs_data_table
 from .data.elections import get_general_election_results
 
 def plot_district_characteristic(map_cd_df, district, characteristic, 
-    title=None, save_dir=None):
+    save_dir=None):
     """Plots and saves the map for a given congressional district and
         characteristic.
 
@@ -31,7 +31,7 @@ def plot_district_characteristic(map_cd_df, district, characteristic,
     # The annotation variable indicates something is off for an estimate when it
     # is filled in. Therefore we only want when these annotation variable is not
     # filled in.
-    district_df = district_df[pd.isnull(district_df[f'{characteristic}A'])]
+    district_df = district_df[pd.isnull(district_df[f'{characteristic} Error Code'])]
 
     # always convert to float to ensure that percent estimates and estimates can
     # be read in
@@ -47,18 +47,13 @@ def plot_district_characteristic(map_cd_df, district, characteristic,
     plt.xlabel('Latitude')
     plt.ylabel('Longitude')
 
-    if title:
-        plt.title(title)
-    else:
-        plt.title(characteristic)
+    plt.title(characteristic)
 
-    if save_dir and title:
+    if save_dir:
         if not os.path.exists(save_dir):
             os.mkdir(save_dir)
-
-        plt.savefig(f'{save_dir}/{title}.png')
-    elif save_dir:
         plt.savefig(f'{save_dir}/{characteristic}.png')
+
     return fig
 
 

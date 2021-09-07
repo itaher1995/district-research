@@ -10,3 +10,4 @@ lxml
 regex
 streamlit==0.84.1
 plotly
+pyyaml

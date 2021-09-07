@@ -5,9 +5,10 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import yaml
 
 from district_research.viz import plot_district_characteristic
-from district_research.data.pvi import clean_pvi
+from district_research.data.pvi import clean_pvi, clean_pvi_2020
 from district_research.data.elections import clean_daily_kos2020
 
 import views as vw
@@ -32,24 +33,26 @@ def main():
         header=1
         ))
 
-    pvi_df = pd.read_csv('data/pvi.csv')
-    pvi_df['Dist'] = pvi_df['Dist'].str.replace('-AL', '-01')
-    pvi_df['pvi_pct'] = clean_pvi(pvi_df['PVI'], True)
+    pvi_2017 = pd.read_csv('data/pvi.csv')
+    pvi_2017['Dist'] = pvi_2017['Dist'].str.replace('-AL', '-01')
+    pvi_2017['pvi_pct'] = clean_pvi(pvi_2017['PVI'], True)
+
+    state_codes = pd.read_csv('data/state_codes.txt', sep='|')
+    pvi_2020 = pd.read_csv('data/tabula-2021 PVI By District.csv', header=None)
+    pvi_2020 = clean_pvi_2020(pvi_2020, state_codes)
 
     states_list = np.unique(house_df['state_po'].values).tolist()
     map_df = vw.make_map_table()
 
-    with open('conf/indicators.json', 'r') as f:
-        indicators = json.load(f)
-    indicators_rev = {v: k for k,v in indicators.items()}
+    with open('conf/indicators.yml', 'r') as f:
+        indicators = yaml.safe_load(f)
+    indicators_rev = {v: k for k,v in indicators['current'].items()}
 
     cd_df = (
         pd.read_csv('data/acs1-congressional-district-indicators-2017-2019.csv')
-        .rename(columns=indicators)
     )
     state_df = (
         pd.read_csv('data/acs1-state-indicators-2017-2019.csv')
-        .rename(columns=indicators)
     )
     
     state = st.sidebar.selectbox('Select State', states_list)
@@ -70,7 +73,7 @@ def main():
     district_num = st.sidebar.selectbox('Select District', district_list)
     CD = f'{state}-{district_num}'
 
-    ind = st.sidebar.selectbox('Plot Census Indicator', list(indicators_rev.keys()))
+    ind = st.sidebar.selectbox('Plot Census Indicator', list(indicators['current'].values()))
 
     # to center title
     c1 = st.beta_container()
@@ -112,9 +115,9 @@ def main():
         )
 
     if district_num != 'SN':
-        ind_df = cd_df[(cd_df['CD'] == CD) & (cd_df['YEAR'] == 2019)][list(indicators.values())].T
+        ind_df = cd_df[(cd_df['CD'] == CD) & (cd_df['YEAR'] == 2019)][list(indicators['current'].values())].T
     else:
-        ind_df = state_df[(state_df['STUSAB'] == state) & (state_df['YEAR'] == 2019)][list(indicators.values())].T
+        ind_df = state_df[(state_df['STUSAB'] == state) & (state_df['YEAR'] == 2019)][list(indicators['current'].values())].T
 
     ind_df.columns = ['Indicator Values']
     center_obj(ind_df, f'{CD} Indicators')
@@ -123,7 +126,11 @@ def main():
     if district_num != 'SN':
         c2 = st.beta_container()
         p1, p2, p3 = c2.beta_columns([3, 10, 1])
-        p2.markdown(vw.get_pvi_sentence(pvi_df, CD))
+        p2.markdown(vw.get_pvi_sentence(pvi_2020, CD, 2021))
+
+        c4 = st.beta_container()
+        p41, p42, p43 = c2.beta_columns([3, 10, 1])
+        p42.markdown(vw.get_pvi_sentence(pvi_2017, CD, 2017))
     
     c3 = st.beta_container()
     p31, p32, p33 = c3.beta_columns([3, 10, 1])
@@ -133,10 +140,10 @@ def main():
     else:
         p32.markdown(vw.get_diversity_index(cd_df, 'CD', CD))
 
-    voting_age_pop_state_ct = state_df[state_df['STUSAB'] == state]['Voting Age Population (Citizens)'].values[0]
+    voting_age_pop_state_ct = state_df[(state_df['STUSAB'] == state) & (state_df['YEAR'] == 2019)]['Voting Age Population (Citizens)'].values[0]
 
     if district_num != 'SN':
-        voting_age_pop_cd_ct = cd_df[cd_df['CD'] == CD]['Voting Age Population (Citizens)'].values[0]
+        voting_age_pop_cd_ct = cd_df[(cd_df['CD'] == CD) & (cd_df['YEAR'] == 2019)]['Voting Age Population (Citizens)'].values[0]
         house_tbl = vw.get_historical_turnout_table(
             house_df, state, district_num, voting_age_pop_cd_ct
         )
@@ -154,8 +161,9 @@ def main():
     map_con = st.beta_container()
     em_map1, map2, em_map3 = map_con.beta_columns([1, 6, 1])
 
-    fig = plot_district_characteristic(map_df, f'{state}-{district_num}', 
-        indicators_rev[ind], ind)
+    fig = plot_district_characteristic(
+        map_df, f'{state}-{district_num}', ind
+    )
     
     em_map1.write('')
     map2.pyplot(fig)

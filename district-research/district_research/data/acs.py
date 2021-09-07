@@ -30,10 +30,13 @@ def get_acs_data_table(api_key, est, year, geo, geo_val, *codes):
 
     # removing the voting age population citizens metric for years prior bc
     # the census doesn't seem to have it for any year after this one.
-    if int(year) >= 2017:
+    if int(year) >= 2015:
         codes_str = ','.join(list(codes) + [x + 'A' for x in codes])
     else:
-        codes_str = ','.join([x for x in codes if x!='DP05_0087E'] + [x + 'A' for x in codes if x!='DP05_0087E'])
+        codes_str = ','.join([
+            x for x in codes if x not in ['DP05_0087E', 'DP05_0082E']] 
+            + [x + 'A' for x in codes if x not in ['DP05_0087E', 'DP05_0082E']
+        ])
 
     geo_formatted = geo.lower().replace(' ', '%20')
     url = (

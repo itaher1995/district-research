@@ -84,10 +84,11 @@ zip_streamlit() {
         "data/1976-2020-president.csv" \
         "data/1976-2020-senate.csv" \
         "data/2020-house-full.csv" \
-        "data/acs1-congressional-district-indicators-2017-2019.csv" \
-        "data/acs1-state-indicators-2017-2019.csv" \
+        "data/acs1-congressional-district-indicators-2012-2019.csv" \
+        "data/acs1-state-indicators-2012-2019.csv" \
         "data/acs-zcta5-cong-dist-indicators-2019.csv" \
         "data/Daily Kos Elections 2012, 2016 & 2020 presidential election results for congressional districts used in 2020 elections - Results.csv" \
         "data/tl_2019_us_zcta510" \
-        "data/pvi.csv"
+        "data/pvi.csv" \
+        "data/tabula-2021 PVI By District.csv"
 }
