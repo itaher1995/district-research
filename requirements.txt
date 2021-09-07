@@ -10,4 +10,8 @@ lxml
 regex
 streamlit==0.84.1
 plotly
+<<<<<<< HEAD
 xlrd>=1.0.0
+=======
+pyyaml
+>>>>>>> develop

@@ -4,7 +4,7 @@ Primary Developer: [Ibrahim Taher](https://github.com/itaher1995)
 
 ## Overview
 
-District Research is a project aimed to understand the socioeconomic and partisan characteristics of a district. We will use American Community Survey Five Year Estimates, as well as congressional district returns.
+District Research is a project aimed to understand the socioeconomic and partisan characteristics of a district. We will use American Community Survey One/Five Year Estimates, as well as congressional district returns.
 
 ## Data
 
@@ -36,7 +36,7 @@ ZCTA to Congressional District data is gathered from the [Geographic Corresponde
 
 ### PVI
 
-PVI is the partisan voter index from the Cook Political Report. Please click **Get the data** [here](https://cookpolitical.com/pvi-map-and-district-list). Rename to pvi.csv and move to `data` folder.
+PVI is the partisan voter index from the Cook Political Report. Please click **Get the data** [here](https://cookpolitical.com/pvi-map-and-district-list) to get 2017 data. Rename to pvi.csv and move to `data` folder. For 2021 data, please contact Ibrahim Taher for the dataset.
 
 For calculating PVI we'll need two datasets. Both are from Daily Kos. The [first](https://docs.google.com/spreadsheets/d/1XbUXnI9OyfAuhP5P3vWtMuGc5UJlrhXbzZo3AwMuHtk/edit#gid=0) will have historical results (2012-2020) for districts in 2020. The [second](https://docs.google.com/spreadsheets/d/1whYBonfwlgTGnYl7U_IH31G0JNYQ9QBIjDfqkZHkW-0/edit#gid=0) will have historical results (2008-2016) for districts in 2020. We combine to get a full view of districts from 2008-2020. Download and save in `data` folder.
 
