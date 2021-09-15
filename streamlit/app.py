@@ -8,11 +8,7 @@ import seaborn as sns
 import yaml
 
 from district_research.viz import plot_district_characteristic
-<<<<<<< HEAD
-from district_research.data.pvi import clean_cook_pvi
-=======
-from district_research.data.pvi import clean_pvi, clean_pvi_2020
->>>>>>> develop
+from district_research.data.pvi import clean_cook_pvi, clean_cook_pvi_2020
 from district_research.data.elections import clean_daily_kos2020
 
 import views as vw

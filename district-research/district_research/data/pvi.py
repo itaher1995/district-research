@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 
-def clean_pvi_2020(pvi_df, state_codes):
+def clean_cooki_pvi_2020(pvi_df, state_codes):
     df = pvi_df.iloc[2:, :5]
     df = df[pd.notnull(df[0])]
     df.columns = ['STATE_NAME', 'DISTRICT', 'INCUMBENT', 'PARTY', 'PVI']
