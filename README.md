@@ -24,7 +24,7 @@ Please save these datasets in the `data` folder.
 
 **Senate**: To get the senate data go [here](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/PEJ5QU). After which you should see the dataset, 1976-2020-senate.tab, click the download button all the way to the right. Download it in the original format (csv). 
 
-**President**: To get the presidential data go [here](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/42MVDX). After which you should see the dataset, 1976-2020-president.tab, click the download button all the way to the right. Download it in the original format (csv). 
+**President**: To get the presidential data by state go [here](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/42MVDX). After which you should see the dataset, 1976-2020-president.tab, click the download button all the way to the right. Download it in the original format (csv).
 
 ### ZCTA Shapefiles
 
@@ -38,6 +38,8 @@ ZCTA to Congressional District data is gathered from the [Geographic Corresponde
 
 PVI is the partisan voter index from the Cook Political Report. Please click **Get the data** [here](https://cookpolitical.com/pvi-map-and-district-list) to get 2017 data. Rename to pvi.csv and move to `data` folder. For 2021 data, please contact Ibrahim Taher for the dataset.
 
+For calculating PVI we'll need two datasets. Both are from Daily Kos. The [first](https://docs.google.com/spreadsheets/d/1XbUXnI9OyfAuhP5P3vWtMuGc5UJlrhXbzZo3AwMuHtk/edit#gid=0) will have historical results (2012-2020) for districts in 2020. The [second](https://docs.google.com/spreadsheets/d/1whYBonfwlgTGnYl7U_IH31G0JNYQ9QBIjDfqkZHkW-0/edit#gid=0) will have historical results (2008-2016) for districts in 2020. We combine to get a full view of districts from 2008-2020. Download and save in `data` folder.
+
 ## Goals
 
 1. To provide quick analysis regarding the socioeconomic state of affairs in a congressional district
@@ -49,7 +51,6 @@ PVI is the partisan voter index from the Cook Political Report. Please click **G
 
 `conf` will house the list of districts we'll parse as well as the census api key
 `data` is the location that the immutable datasets should be stored.
-`views` is the location that views generated either from ACS API or immutable datasets will be stored.
 `outputs` where the outputs will be stored
 `zips` where the zipped outputs will be stored
 `district-research` the library used for most of the data munging and analysis
@@ -63,3 +64,7 @@ PVI is the partisan voter index from the Cook Political Report. Please click **G
 
 Python (preferably >= Python 3.7)
 Bash
+
+## Major TODOs:
+
+1. Change saving directory for some datasets from `data` to `views`. We need to do this to segregate immutable data from data that's transformed. 

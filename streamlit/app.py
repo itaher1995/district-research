@@ -8,7 +8,7 @@ import seaborn as sns
 import yaml
 
 from district_research.viz import plot_district_characteristic
-from district_research.data.pvi import clean_pvi, clean_pvi_2020
+from district_research.data.pvi import clean_cook_pvi, clean_cook_pvi_2020
 from district_research.data.elections import clean_daily_kos2020
 
 import views as vw
@@ -35,11 +35,11 @@ def main():
 
     pvi_2017 = pd.read_csv('data/pvi.csv')
     pvi_2017['Dist'] = pvi_2017['Dist'].str.replace('-AL', '-01')
-    pvi_2017['pvi_pct'] = clean_pvi(pvi_2017['PVI'], True)
+    pvi_2017['pvi_pct'] = clean_cook_pvi(pvi_2017['PVI'], True)
 
     state_codes = pd.read_csv('data/state_codes.txt', sep='|')
     pvi_2020 = pd.read_csv('data/tabula-2021 PVI By District.csv', header=None)
-    pvi_2020 = clean_pvi_2020(pvi_2020, state_codes)
+    pvi_2020 = clean_cook_pvi_2020(pvi_2020, state_codes)
 
     states_list = np.unique(house_df['state_po'].values).tolist()
     map_df = vw.make_map_table()

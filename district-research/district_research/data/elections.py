@@ -88,10 +88,14 @@ def get_general_election_results(df, start, stop, area, is_district):
         # these may be write ins. 
         subset = subset[~subset['party'].str.match('(?:DEMOCRAT|REPUBLICAN) \(\d\)')]
     
-    return (
-        subset[['year', filter_col, 'party', 'candidatevotes']]
-        [subset[filter_col] == area]
-    )
+    # star is used to calculate PVI. We will capture all votes across states.
+    if area != '*':
+        return (
+            subset[['year', filter_col, 'party', 'candidatevotes']]
+            [subset[filter_col] == area]
+        )
+    else:
+        return subset[['year', filter_col, 'party', 'candidatevotes']]
 
 
 def clean_daily_kos2020(df):
