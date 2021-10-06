@@ -101,3 +101,4 @@ def scrape_cnn(states):
             'party', 'candidatevotes', 'stage'
         ]]
     )
+   
